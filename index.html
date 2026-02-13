@@ -3,117 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Weather App</title>
+    <title>Movie App</title>
     <style>
-        body{
-            height:100vh;
-            display:flex;
-            justify-content: center;
-            align-items: center;
-            background:linear-gradient(135deg,rgb(6, 37, 87),rgb(4, 8, 27));
-        }
         .container{
-            display:flex;
+            display: flex;
             flex-direction: column;
+            width:300px;
+            height:300px;
+            border:2px solid rgb(17, 144, 223);
             align-items: center;
             justify-content: center;
-            border:3px solid rgb(0,255,255);
-            padding:20px;
-            height:450px;
-            width:300px;
+        }
+        body{
+            display:flex;
+            height:100vh;
+            justify-content: center;
+            align-items: center;
+             background: linear-gradient(135deg, rgb(3, 3, 41), rgb(5,10,41));
+        }
+        h2{
             color:white;
-            border-radius:10px;
         }
-        .container:hover{
-            border:5px solid rgb(0,255,255);
-            transform: translateY(-5px);
-            box-shadow: 0px 0px 2px rgba(25, 225, 225, 0.756);
-        }
-        #temperature{
-            height:50px;
-            font-size: 20px;
-            border:5px solid rgb(15, 186, 186);
+        input{
+            height:45px;
+            border:2px solid rgb(0,255,255);
             border-radius: 10px;
-            padding:5px;
-        }
-        #temperature:hover{
-            background:white;
-            color:black;
+            margin-bottom: 10px;
         }
         button{
-            height:40px;
-            padding:5px;
-            margin-top:10px;
-            border-radius:10px;
-            font-weight: 700;
-            width:100px;
-            backdrop-filter: blur(-5px);
-            border:2px solid rgb(0,255,255);
             background: transparent;
+            height:30px;
             color:white;
+            border-radius:10px;
+            border:2px solid rgb(0,255,255);
+            width:100px;
+            cursor: pointer;
         }
         button:hover{
-            background: rgb(174, 56, 56);
-            transform: translateY(-5px);
-        }
-        .temperature{
-            height:50px;
-        }
-        .wind-direction{
-            display: flex;
-            gap:30px;
-            margin-top:20px;
-        }
-        h3{
-            color:white;
+            background: white;
+            color:black;
         }
         p{
-            color:rgb(0,255,255);
-            margin-left:20px;
+            color:white;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h2>🌤️ Weather Report</h2>
-        <input id="temperature" type="text" placeholder="Enter your city" required>
-        <button onclick="getWeather()">Get Weather</button>
-        <div class="temperature">
-            
-            <h3><p id="temp"></p> Temperature </h3>
-        </div>
-        <div class="wind-direction">
-            <div class="speed">
-                
-                <h3>Wind Speed<p id="speed"></p></h3>
-            </div>
-            <div class="direction">
-                
-                <h3>Wind Direction<p id="direction"></p></h3>
-            </div>
+        <h2>Movie Search</h2>
+        <input id="movie" type="text" placeholder="Enter movie name" required>
+        <button onclick="getMovie()">Search</button>
+        <div class="details">
+            <p id="name"></p>
+            <p id="rating"></p>
         </div>
     </div>
     <script>
-        
-        const temp=document.getElementById("temp");
-        const speed=document.getElementById("speed");
-        const direction=document.getElementById("direction");
-        async function getWeather(){
-            const city=document.getElementById("temperature").value;
-            const res=await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${city}&count=1`);
+        async function getMovie(){
+            const names=document.getElementById("movie").value.trim();
+            const name=document.getElementById("name");
+            const rate=document.getElementById("rating");
+            const res=await fetch(`https://api.tvmaze.com/search/shows?q=${names}`);
             const data=await res.json();
-            if(!data.results){
-                alert("City not found");
-                return;
-            }
-            const lat=data.results[0].latitude;
-            const lon=data.results[0].longitude;
-            const weather=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
-            const weatherdata=await weather.json();
-            temp.innerText=weatherdata.current_weather.temperature;
-            speed.innerText=weatherdata.current_weather.windspeed;
-            direction.innerText=weatherdata.current_weather.winddirection;
-
+            const movie=data[0].show;
+            name.innerText=movie.name;
+            rate.innerText=movie.rating.average?"Rating"+movie.rating.average:"No rating available";
         }
     </script>
 </body>
